@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {useSupabaseClient} from "@supabase/auth-helpers-react";
-import Album from "../components/album";
+import Album from "../../components/album";
 
 interface LibraryProps {
     session: any
 }
 
-const Library: React.FC<LibraryProps> = ({session}) => {
+const Index: React.FC<LibraryProps> = ({session}) => {
     const [albums, setAlbums] = useState<Array<any>>([])
     const supabase = useSupabaseClient()
 
     useEffect(() => {
-        // get albums with the artist name
         supabase
             .from('albums')
             .select(`id, title, picture, artist:artists!albums_artist_id_fkey (name)`)
@@ -23,6 +22,7 @@ const Library: React.FC<LibraryProps> = ({session}) => {
                 setAlbums(data)
             })
     }, [session])
+
     return (
         <div className="bg-gray-200 dark:bg-black">
             <h1>library</h1>
@@ -39,4 +39,4 @@ const Library: React.FC<LibraryProps> = ({session}) => {
     );
 }
 
-export default Library
+export default Index
