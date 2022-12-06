@@ -165,7 +165,7 @@ const Player: React.FC<PlayerProps> = () => {
     }
 
     const toNextTrack = () => {
-        setCurrentSongIndex((prevState: number) => {
+        setCurrentSongIndex((prevState: any) => {
             console.info('to next track', prevState)
             if (prevState === null) {
                 // console.info('prevState === null  -> 0')

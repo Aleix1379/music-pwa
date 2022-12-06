@@ -3,7 +3,11 @@ import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react'
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Account({ session }) {
+interface AccountProps {
+    session: any
+}
+
+const Account: React.FC<AccountProps> = ({ session }) => {
     const supabase = useSupabaseClient()
     const user = useUser()
     const [loading, setLoading] = useState(true)
@@ -11,7 +15,7 @@ export default function Account({ session }) {
     const [website, setWebsite] = useState(null)
     const [avatar_url, setAvatarUrl] = useState(null)
     const [artists, setArtists] = useState<any>(null)
-    const [image, setImage] = useState(null)
+    const [image, setImage] = useState<string | null>(null)
 
     useEffect(() => {
         getProfile()
@@ -28,7 +32,7 @@ export default function Account({ session }) {
             let { data, error, status } = await supabase
                 .from('profiles')
                 .select(`username, website, avatar_url`)
-                .eq('id', user.id)
+                .eq('id', user?.id)
                 .single()
 
             if (error && status !== 406) {
@@ -48,12 +52,13 @@ export default function Account({ session }) {
         }
     }
 
-    async function updateProfile({ username, website, avatar_url }) {
+    async function updateProfile(params: any) {
+        const { username, website, avatar_url } = params
         try {
             setLoading(true)
 
             const updates = {
-                id: user.id,
+                id: user?.id,
                 username,
                 website,
                 avatar_url,
@@ -82,7 +87,9 @@ export default function Account({ session }) {
             const response = supabase.storage.from('artists').getPublicUrl(imageName)
             console.info('response', response)
             console.info('response.data.publicUrl', response.data.publicUrl)
-            setImage(response.data.publicUrl)
+            if (response.data.publicUrl) {
+                setImage(response.data.publicUrl)
+            }
 
         } catch (error) {
             console.log('Error downloading image: ', error)
@@ -106,3 +113,5 @@ export default function Account({ session }) {
         </div>
     )
 }
+
+export default Account
